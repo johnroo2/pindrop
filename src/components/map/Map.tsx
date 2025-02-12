@@ -1,9 +1,10 @@
 import { Balloon } from '@/types/generalTypes';
 import 'leaflet/dist/leaflet.css';
-import { MapContainer, TileLayer } from 'react-leaflet';
+import { MapContainer, TileLayer, useMap } from 'react-leaflet';
 import BalloonMarker from './markers/balloon/BalloonMarker';
 import { DisasterFeature } from '@/types/APITypes';
 import DisasterMarker from './markers/disaster/DisasterMarker';
+import { useEffect } from 'react';
 
 interface MapProps {
     balloons: (Balloon & { offset: number })[];
@@ -12,6 +13,28 @@ interface MapProps {
     disasters: DisasterFeature[];
     setFocusBalloon: (balloon: Balloon & { id: number, offset: number } | undefined) => void;
     setFocusDisaster: (disaster: DisasterFeature | undefined) => void;
+}
+
+interface DiffListenerProps {
+    focusBalloon: Balloon & { id: number, offset: number } | undefined;
+    focusDisaster: DisasterFeature | undefined;
+}
+
+const DiffListener = ({ focusBalloon, focusDisaster }: DiffListenerProps) => {
+    const map = useMap();
+
+    useEffect(() => {
+        console.log(focusDisaster);
+        if (focusDisaster) {
+            map.flyTo([focusDisaster.geometry.y, focusDisaster.geometry.x], Math.max(map.getZoom(), 5), { animate: true, duration: 0.4 });
+        }
+        if (focusBalloon) {
+            map.flyTo(focusBalloon.position as [number, number], Math.max(map.getZoom(), 5), { animate: true, duration: 0.4 });
+        }
+
+    }, [focusDisaster, focusBalloon, map])
+
+    return <></>
 }
 
 export default function Map({ balloons, focusBalloon, focusDisaster, disasters, setFocusBalloon, setFocusDisaster }: MapProps) {
@@ -28,6 +51,7 @@ export default function Map({ balloons, focusBalloon, focusDisaster, disasters, 
             ]}
             maxBoundsViscosity={1.0}
         >
+            <DiffListener focusBalloon={focusBalloon} focusDisaster={focusDisaster} />
             <TileLayer
                 attribution='&copy; <a href="https://www.stadiamaps.com/" target="_blank">Stadia Maps</a> &copy; <a href="https://openmaptiles.org/" target="_blank">OpenMapTiles</a> &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
                 url="https://tiles.stadiamaps.com/tiles/alidade_smooth_dark/{z}/{x}/{y}{r}.png"

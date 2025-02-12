@@ -145,23 +145,24 @@ export default function Home() {
 
   return (
     <SidebarProvider>
-      <div className="relative grid w-full h-screen"
-        style={{
-          gridTemplateColumns: "auto 1fr"
-        }}>
-
-        <AppSidebar
-          refetch={onReload}
-          activeBalloonEntry={activeBalloonEntry}
-          balloonEntries={balloonEntries}
-          selectedHour={selectedHour}
-          handleHourForward={handleHourForward}
-          handleHourBackward={handleHourBackward}
-          lastFetch={lastFetch}
-          loading={loading}
-          focusBalloon={focusBalloon}
-        />
-        <main className="h-screen">
+      <div className="relative grid grid-cols-1 lg:grid-cols-[auto_1fr] w-screen h-screen overflow-x-hidden">
+        <div className="hidden lg:block lg:w-[300px] xl:w-[350px]">
+          <AppSidebar
+            refetch={onReload}
+            activeBalloonEntry={activeBalloonEntry}
+            balloonEntries={balloonEntries}
+            selectedHour={selectedHour}
+            handleHourForward={handleHourForward}
+            handleHourBackward={handleHourBackward}
+            lastFetch={lastFetch}
+            loading={loading}
+            focusBalloon={focusBalloon}
+            disasters={disasterData}
+            setFocusDisaster={setFocusDisaster}
+            setFocusBalloon={setFocusBalloon}
+          />
+        </div>
+        <main className="h-screen w-full">
           <div className="relative h-full">
             <div className={`absolute inset-0 transition-opacity duration-500 
               ${loading || !activeBalloonEntry || !(disasterData.length > 0) ?
@@ -178,6 +179,7 @@ export default function Home() {
                 (activeBalloonEntry?.balloons || []).map(balloon => ({ ...balloon, offset: selectedHour }))}
                 disasters={disasterData}
                 focusBalloon={focusBalloon}
+                focusDisaster={focusDisaster}
                 setFocusBalloon={setFocusBalloon}
                 setFocusDisaster={setFocusDisaster}
               />

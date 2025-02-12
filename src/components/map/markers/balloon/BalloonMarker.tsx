@@ -1,9 +1,9 @@
+import { DisasterFeature } from "@/types/APITypes";
 import { Balloon } from "@/types/generalTypes";
 import L from "leaflet";
 import { renderToStaticMarkup } from "react-dom/server";
-import { Marker, useMap } from "react-leaflet";
+import { Marker } from "react-leaflet";
 import BalloonIcon from "./BalloonIcon";
-import { DisasterFeature } from "@/types/APITypes";
 
 interface BalloonMarkerProps {
     balloon: Balloon & { id: number, offset: number };
@@ -15,8 +15,6 @@ interface BalloonMarkerProps {
 }
 
 export default function BalloonMarker({ balloon, index, setFocusBalloon, noFocus, noHighlight, setFocusDisaster }: BalloonMarkerProps) {
-    const map = useMap();
-
     const iconMarkup = renderToStaticMarkup(
         <BalloonIcon
             altitude={balloon.altitude}
@@ -46,7 +44,6 @@ export default function BalloonMarker({ balloon, index, setFocusBalloon, noFocus
                 click: () => {
                     setFocusBalloon(balloon);
                     setFocusDisaster(undefined);
-                    map.setView(position as [number, number], Math.max(map.getZoom(), 5), { animate: true, duration: 0.4 });
                 }
             }}
         />

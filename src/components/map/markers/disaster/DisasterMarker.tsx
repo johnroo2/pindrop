@@ -1,9 +1,9 @@
 import { DisasterFeature } from "@/types/APITypes";
+import { Balloon } from "@/types/generalTypes";
 import L from "leaflet";
 import { renderToStaticMarkup } from "react-dom/server";
-import { Marker, useMap } from "react-leaflet";
+import { Marker } from "react-leaflet";
 import DisasterIcon from "./DisasterIcon";
-import { Balloon } from "@/types/generalTypes";
 
 interface DisasterMarkerProps {
     index: number;
@@ -14,8 +14,6 @@ interface DisasterMarkerProps {
 }
 
 export default function DisasterMarker({ index, disaster, setFocusBalloon, setFocusDisaster, noHighlight }: DisasterMarkerProps) {
-    const map = useMap();
-
     const iconMarkup = renderToStaticMarkup(
         <DisasterIcon
             disaster={disaster}
@@ -43,7 +41,6 @@ export default function DisasterMarker({ index, disaster, setFocusBalloon, setFo
                 click: () => {
                     setFocusBalloon(undefined);
                     setFocusDisaster(disaster);
-                    map.setView([disaster.geometry.y, disaster.geometry.x], Math.max(map.getZoom(), 5), { animate: true, duration: 0.4 });
                 }
             }}
         />

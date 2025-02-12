@@ -1,30 +1,29 @@
+import disasterService from "@/services/disasterService";
+import geoService from "@/services/geoService";
 import { DisasterFeature, GeneralLocateResponse, GetNewsArticlesResponse } from "@/types/APITypes";
 import { Balloon } from "@/types/generalTypes";
-import { Card } from "../ui/card";
-import { useEffect, useMemo, useState } from "react";
 import { AxiosError } from "axios";
-import geoService from "@/services/geoService";
-import { MoonLoader } from "react-spinners";
 import { ExternalLink, Newspaper } from "lucide-react";
-import { LuShieldAlert } from "react-icons/lu";
 import Link from "next/link";
-import disasterService from "@/services/disasterService";
+import { useEffect, useMemo, useState } from "react";
+import { MoonLoader } from "react-spinners";
+import { Card } from "../ui/card";
 
-import { Bar } from "react-chartjs-2";
+import { getColor } from "@/lib/balloonUtils";
+import { DisasterIcon, getDisasterTitle, getNearestBalloons } from "@/lib/disasterUtils";
 import {
-    Chart as ChartJS,
-    CategoryScale,
-    LinearScale,
     BarElement,
+    CategoryScale,
+    Chart as ChartJS,
+    ChartOptions,
+    Filler,
+    Legend,
+    LinearScale,
     Title,
     Tooltip,
-    Legend,
-    Filler,
-    ChartOptions,
 } from 'chart.js';
-import { getDisasterTitle, getNearestBalloons } from "@/lib/disasterUtils";
-import { IoBalloon } from "react-icons/io5";
-import { getColor } from "@/lib/balloonUtils";
+import { Bar } from "react-chartjs-2";
+import { IoBalloon, IoWarning } from "react-icons/io5";
 
 ChartJS.register(
     CategoryScale,
@@ -205,7 +204,7 @@ export default function DisasterInfo({ disaster, disasterLocationMap, setDisaste
                 <div className="p-4 grid grid-rows-[auto_auto_auto_1fr] overflow-y-auto h-full">
                     <div className="flex justify-between items-center">
                         <div className="flex items-center gap-2 max-w-[16rem]">
-                            <LuShieldAlert size={20} className="min-w-[20px]" />
+                            <DisasterIcon disaster={disaster} />
                             <h2 className="text-lg font-bold whitespace-normal break-words leading-tight">{getDisasterTitle(disaster)}</h2>
                         </div>
                         <button
@@ -255,6 +254,11 @@ export default function DisasterInfo({ disaster, disasterLocationMap, setDisaste
                                 <p className="text-sm">({disaster.geometry.y.toFixed(4)}°, {disaster.geometry.x.toFixed(4)}°)</p>
                             </div>
                         </Link>
+                        <div className="max-w-[23rem]">
+                            <label className="text-muted-foreground text-xs">Raw Summary</label>
+                            <p className="text-sm text-foreground whitespace-normal break-words leading-tight">{disaster.attributes.name}</p>
+                            <p className="text-sm text-foreground whitespace-normal break-words leading-tight">{disaster.attributes.severity}</p>
+                        </div>
                         <div className="grid grid-cols-2">
                             <div>
                                 <label className="text-muted-foreground text-xs">Date Recorded</label>
@@ -334,6 +338,12 @@ export default function DisasterInfo({ disaster, disasterLocationMap, setDisaste
                                         <div className={`max-w-[20rem]`}>
                                             <Bar data={newsChartData} options={chartOptions} />
                                         </div>
+                                        <p className="text-[0.7rem] text-muted-foreground">
+                                            Total Coverage: {newsData.stats.coverage.total}
+                                        </p>
+                                        <p className="text-[0.7rem] text-muted-foreground">
+                                            Last Hour: {newsData.stats.coverage.lastHour}
+                                        </p>
                                     </div>
                                 </div>
                             ) : loading ? (
@@ -344,7 +354,12 @@ export default function DisasterInfo({ disaster, disasterLocationMap, setDisaste
                                     <h2 className="text-muted-foreground text-sm">Loading news...</h2>
                                 </div>
                             ) : (
-                                <></>
+                                <div className="flex items-center gap-1.5">
+                                    <IoWarning className="text-muted-foreground" size={16} />
+                                    <p className="text-xs text-muted-foreground">
+                                        Insignificant news coverage
+                                    </p>
+                                </div>
                             )}
                     </div>
                 </div>

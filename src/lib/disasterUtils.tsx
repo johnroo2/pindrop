@@ -2,6 +2,12 @@ import { DisasterFeature } from '@/types/APITypes';
 import { Balloon } from '@/types/generalTypes';
 import { cardinalDirection } from './utils';
 
+import { LucideShield } from 'lucide-react';
+import { PiPlantFill } from 'react-icons/pi';
+import { MdVolcano } from 'react-icons/md';
+import { RiEarthquakeFill, RiFloodFill, RiTyphoonFill } from 'react-icons/ri';
+import { ImFire } from 'react-icons/im';
+
 const toRadians = (degrees: number) => degrees * (Math.PI / 180);
 
 export function getNearestBalloons(
@@ -26,16 +32,16 @@ export function getNearestBalloons(
     const aA =
       Math.sin(deltaLatA / 2) * Math.sin(deltaLatA / 2) +
       Math.cos(toRadians(lat1)) *
-        Math.cos(toRadians(lat2A)) *
-        Math.sin(deltaLonA / 2) *
-        Math.sin(deltaLonA / 2);
+      Math.cos(toRadians(lat2A)) *
+      Math.sin(deltaLonA / 2) *
+      Math.sin(deltaLonA / 2);
 
     const aB =
       Math.sin(deltaLatB / 2) * Math.sin(deltaLatB / 2) +
       Math.cos(toRadians(lat1)) *
-        Math.cos(toRadians(lat2B)) *
-        Math.sin(deltaLonB / 2) *
-        Math.sin(deltaLonB / 2);
+      Math.cos(toRadians(lat2B)) *
+      Math.sin(deltaLonB / 2) *
+      Math.sin(deltaLonB / 2);
 
     return (
       Math.atan2(Math.sqrt(aA), Math.sqrt(1 - aA)) -
@@ -66,9 +72,9 @@ export function getNearestBalloons(
     const a =
       Math.sin(deltaLat / 2) * Math.sin(deltaLat / 2) +
       Math.cos(lat1Rad) *
-        Math.cos(lat2Rad) *
-        Math.sin(deltaLon / 2) *
-        Math.sin(deltaLon / 2);
+      Math.cos(lat2Rad) *
+      Math.sin(deltaLon / 2) *
+      Math.sin(deltaLon / 2);
     const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
     const distance = earthRadiusKm * c;
 
@@ -80,17 +86,17 @@ export function getNearestBalloons(
   });
 }
 
+const disasterCodes = {
+  DR: 'Drought',
+  VO: 'Volcano',
+  EQ: 'Earthquake',
+  TC: 'Tropical Cyclone',
+  FL: 'Flood',
+  WF: 'Forest Fire',
+};
+
 export function getDisasterTitle(disaster: DisasterFeature) {
   if (!disaster) return '';
-
-  const disasterCodes = {
-    DR: 'Drought',
-    VO: 'Volcano',
-    EQ: 'Earthquake',
-    TC: 'Tropical Cyclone',
-    FL: 'Flood',
-    WF: 'Forest Fire',
-  };
 
   if (
     disaster.attributes.eventtype &&
@@ -111,10 +117,41 @@ export function getDisasterTitle(disaster: DisasterFeature) {
       }
     }
 
-    return `${prefix}${
-      disasterCodes[disaster.attributes.eventtype as keyof typeof disasterCodes]
-    }`;
+    return `${prefix}${disasterCodes[disaster.attributes.eventtype as keyof typeof disasterCodes]
+      }`;
   } else {
     return 'Unknown Disaster';
   }
 }
+
+export function DisasterIcon({ disaster }: { disaster: DisasterFeature }) {
+  if (!disaster) {
+    return <LucideShield size={20} className="text-red-500 min-w-[20px]" />
+  }
+
+  if (disaster.attributes.eventtype === 'DR') {
+    return <PiPlantFill size={20} className="text-red-500 min-w-[20px]" />
+  }
+
+  if (disaster.attributes.eventtype === 'VO') {
+    return <MdVolcano size={20} className="text-red-500 min-w-[20px]" />
+  }
+
+  if (disaster.attributes.eventtype === 'EQ') {
+    return <RiEarthquakeFill size={20} className="text-red-500 min-w-[20px]" />
+  }
+
+  if (disaster.attributes.eventtype === 'TC') {
+    return <RiTyphoonFill size={20} className="text-red-500 min-w-[20px]" />
+  }
+
+  if (disaster.attributes.eventtype === 'FL') {
+    return <RiFloodFill size={20} className="text-red-500 min-w-[20px]" />
+  }
+
+  if (disaster.attributes.eventtype === 'WF') {
+    return <ImFire size={20} className="text-red-500 min-w-[20px]" />
+  }
+
+  return <LucideShield size={20} className="text-red-500 min-w-[20px]" />
+} 

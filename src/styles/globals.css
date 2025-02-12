@@ -116,7 +116,6 @@
 }
 
 *::-webkit-scrollbar-thumb {
-    background-color: var(--sidebar-accent);
+    background-color: rgba(20, 10, 0, 0.2);
     border-radius: 10px;
-    border: 2px solid var(--sidebar-background);
 }

@@ -1,5 +1,5 @@
 import { getExtrapolatedVelocityString, getNearestDisasters } from "@/lib/balloonUtils";
-import { getDisasterTitle } from "@/lib/disasterUtils";
+import { DisasterIcon, getDisasterTitle } from "@/lib/disasterUtils";
 import geoService from "@/services/geoService";
 import { DisasterFeature, GeneralLocateResponse } from "@/types/APITypes";
 import { Balloon } from "@/types/generalTypes";
@@ -22,7 +22,6 @@ import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import { Line } from 'react-chartjs-2';
 import { IoBalloon } from "react-icons/io5";
-import { LuShieldAlert } from "react-icons/lu";
 import { MoonLoader } from "react-spinners";
 import { Card } from "../ui/card";
 
@@ -317,7 +316,7 @@ export default function BalloonInfo({ balloon, focusBalloonVersions, setFocusBal
                                         }}
                                     >
                                         <div className="w-8 h-8 bg-accent/75 rounded-md flex items-center justify-center">
-                                            <LuShieldAlert size={20} className="text-red-500" />
+                                            <DisasterIcon disaster={disaster} />
                                         </div>
                                         <div className="flex flex-col items-start">
                                             <h3 className="text-sm text-foreground font-semibold">{getDisasterTitle(disaster)}</h3>
