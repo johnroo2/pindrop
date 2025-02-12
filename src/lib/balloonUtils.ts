@@ -6,15 +6,15 @@ const toRadians = (degrees: number) => degrees * (Math.PI / 180);
 
 export const getColor = (alt: number) => {
   if (alt > 20) {
-    return 'text-sky-400';
+    return 'text-violet-400';
   } else if (alt > 15) {
-    return 'text-emerald-400';
+    return 'text-indigo-400';
   } else if (alt > 10) {
-    return 'text-green-400';
+    return 'text-blue-400';
   } else if (alt > 5) {
-    return 'text-lime-400';
+    return 'text-sky-400';
   } else {
-    return 'text-yellow-400';
+    return 'text-cyan-400';
   }
 };
 
@@ -153,7 +153,7 @@ export function getExtrapoledVelocity(
   const x =
     Math.cos(lat1) * Math.sin(lat2) -
     Math.sin(lat1) * Math.cos(lat2) * Math.cos(lon2 - lon1);
-  const bearing = ((Math.atan2(y, x) * 180) / Math.PI + 360) % 360;
+  const bearing = ((Math.atan2(y, x) * 180) / Math.PI + 180) % 360;
 
   return [speed, bearing];
 }

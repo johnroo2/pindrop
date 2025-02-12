@@ -38,7 +38,7 @@ export default async function get_weather_forecast(
         params: {
           key: process.env.OPEN_WEATHER_API_KEY,
           q: `${lat},${lon}`,
-          days: 7,
+          days: 3,
           aqi: 'no',
         },
       })

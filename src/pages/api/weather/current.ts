@@ -38,7 +38,7 @@ export default async function get_weather(
         params: {
           key: process.env.OPEN_WEATHER_API_KEY,
           q: `${lat},${lon}`,
-          aqi: 'no',
+          aqi: 'yes',
         },
       })
       .then((res) => res.data)

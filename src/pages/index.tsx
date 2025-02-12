@@ -1,7 +1,8 @@
-import AppSidebar from "@/components/panels/AppSidebar";
-import BalloonInfo from "@/components/panels/BalloonInfo";
 import MapLegend from "@/components/map/MapLegend";
 import MapLoader from "@/components/map/MapLoader";
+import AppSidebar from "@/components/panels/AppSidebar";
+import BalloonInfo from "@/components/panels/BalloonInfo";
+import DisasterInfo from "@/components/panels/DisasterInfo";
 import { SidebarProvider } from "@/components/ui/sidebar";
 import ballonService from "@/services/balloonService";
 import disasterService from "@/services/disasterService";
@@ -10,7 +11,6 @@ import { Balloon, BalloonEntry } from "@/types/generalTypes";
 import { AxiosError } from "axios";
 import dynamic from "next/dynamic";
 import { useCallback, useEffect, useMemo, useState } from "react";
-import DisasterInfo from "@/components/panels/DisasterInfo";
 
 const ClientMap = dynamic(
   () => import('@/components/map/Map'),
@@ -145,7 +145,7 @@ export default function Home() {
 
   return (
     <SidebarProvider>
-      <div className="relative grid grid-cols-1 lg:grid-cols-[auto_1fr] w-screen h-screen overflow-x-hidden">
+      <div className="relative grid grid-cols-1 lg:grid-cols-[auto_1fr] w-screen h-screen overflow-hidden">
         <div className="hidden lg:block lg:w-[300px] xl:w-[350px]">
           <AppSidebar
             refetch={onReload}
@@ -174,9 +174,10 @@ export default function Home() {
               ${loading || !activeBalloonEntry || !(disasterData.length > 0) ?
                 'opacity-0 pointer-events-none' :
                 'opacity-100'}`}>
-              <ClientMap balloons={focusBalloonVersions.length > 0 ?
-                focusBalloonVersions :
-                (activeBalloonEntry?.balloons || []).map(balloon => ({ ...balloon, offset: selectedHour }))}
+              <ClientMap
+                balloons={focusBalloonVersions.length > 0 ?
+                  focusBalloonVersions :
+                  (activeBalloonEntry?.balloons || []).map(balloon => ({ ...balloon, offset: selectedHour }))}
                 disasters={disasterData}
                 focusBalloon={focusBalloon}
                 focusDisaster={focusDisaster}

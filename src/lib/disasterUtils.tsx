@@ -10,6 +10,16 @@ import { ImFire } from 'react-icons/im';
 
 const toRadians = (degrees: number) => degrees * (Math.PI / 180);
 
+export const getColor = (severity: number) => {
+  if (severity <= 1) {
+    return 'text-lime-500';
+  } else if (severity <= 2) {
+    return 'text-orange-500';
+  } else {
+    return 'text-red-500';
+  }
+}
+
 export function getNearestBalloons(
   disaster: DisasterFeature | undefined,
   balloons: (Balloon & { id: number; offset: number })[]
@@ -126,32 +136,32 @@ export function getDisasterTitle(disaster: DisasterFeature) {
 
 export function DisasterIcon({ disaster }: { disaster: DisasterFeature }) {
   if (!disaster) {
-    return <LucideShield size={20} className="text-red-500 min-w-[20px]" />
+    return <LucideShield size={20} className={`text-gray-500 min-w-[20px]`} />
   }
 
   if (disaster.attributes.eventtype === 'DR') {
-    return <PiPlantFill size={20} className="text-red-500 min-w-[20px]" />
+    return <PiPlantFill size={20} className={`${getColor(Number.parseInt(disaster.attributes.alertscore))} min-w-[20px]`} />
   }
 
   if (disaster.attributes.eventtype === 'VO') {
-    return <MdVolcano size={20} className="text-red-500 min-w-[20px]" />
+    return <MdVolcano size={20} className={`${getColor(Number.parseInt(disaster.attributes.alertscore))} min-w-[20px]`} />
   }
 
   if (disaster.attributes.eventtype === 'EQ') {
-    return <RiEarthquakeFill size={20} className="text-red-500 min-w-[20px]" />
+    return <RiEarthquakeFill size={20} className={`${getColor(Number.parseInt(disaster.attributes.alertscore))} min-w-[20px]`} />
   }
 
   if (disaster.attributes.eventtype === 'TC') {
-    return <RiTyphoonFill size={20} className="text-red-500 min-w-[20px]" />
+    return <RiTyphoonFill size={20} className={`${getColor(Number.parseInt(disaster.attributes.alertscore))} min-w-[20px]`} />
   }
 
   if (disaster.attributes.eventtype === 'FL') {
-    return <RiFloodFill size={20} className="text-red-500 min-w-[20px]" />
+    return <RiFloodFill size={20} className={`${getColor(Number.parseInt(disaster.attributes.alertscore))} min-w-[20px]`} />
   }
 
   if (disaster.attributes.eventtype === 'WF') {
-    return <ImFire size={20} className="text-red-500 min-w-[20px]" />
+    return <ImFire size={20} className={`${getColor(Number.parseInt(disaster.attributes.alertscore))} min-w-[20px]`} />
   }
 
-  return <LucideShield size={20} className="text-red-500 min-w-[20px]" />
+  return <LucideShield size={20} className={`${getColor(Number.parseInt(disaster.attributes.alertscore))} min-w-[20px]`} />
 } 

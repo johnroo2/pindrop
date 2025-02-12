@@ -1,10 +1,10 @@
+import { DisasterFeature } from '@/types/APITypes';
 import { Balloon } from '@/types/generalTypes';
 import 'leaflet/dist/leaflet.css';
+import { useEffect } from 'react';
 import { MapContainer, TileLayer, useMap } from 'react-leaflet';
 import BalloonMarker from './markers/balloon/BalloonMarker';
-import { DisasterFeature } from '@/types/APITypes';
 import DisasterMarker from './markers/disaster/DisasterMarker';
-import { useEffect } from 'react';
 
 interface MapProps {
     balloons: (Balloon & { offset: number })[];
@@ -24,12 +24,15 @@ const DiffListener = ({ focusBalloon, focusDisaster }: DiffListenerProps) => {
     const map = useMap();
 
     useEffect(() => {
-        console.log(focusDisaster);
+        const zoomOffset = 6 * Math.exp(-0.7 * (Math.max(map.getZoom(), 5) - 4.5));
+
         if (focusDisaster) {
-            map.flyTo([focusDisaster.geometry.y, focusDisaster.geometry.x], Math.max(map.getZoom(), 5), { animate: true, duration: 0.4 });
+            map.flyTo([focusDisaster.geometry.y, focusDisaster.geometry.x + zoomOffset],
+                Math.max(map.getZoom(), 5), { animate: true, duration: 0.4 });
         }
         if (focusBalloon) {
-            map.flyTo(focusBalloon.position as [number, number], Math.max(map.getZoom(), 5), { animate: true, duration: 0.4 });
+            map.flyTo([focusBalloon.position[0], focusBalloon.position[1] + zoomOffset],
+                Math.max(map.getZoom(), 5), { animate: true, duration: 0.4 });
         }
 
     }, [focusDisaster, focusBalloon, map])

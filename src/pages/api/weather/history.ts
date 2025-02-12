@@ -28,7 +28,7 @@ export default async function get_weather_history(
   try {
     const endDate = new Date();
     const startDate = new Date();
-    startDate.setDate(startDate.getDate() - 14);
+    startDate.setDate(startDate.getDate() - 7);
 
     const dtStart = startDate.toISOString().split('T')[0];
     const dtEnd = endDate.toISOString().split('T')[0];

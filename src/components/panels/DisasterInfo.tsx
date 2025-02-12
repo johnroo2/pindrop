@@ -9,18 +9,18 @@ import { useEffect, useMemo, useState } from "react";
 import { MoonLoader } from "react-spinners";
 import { Card } from "../ui/card";
 
+import useDisasterNewsStats from "@/hooks/charts/useDisasterNewsStats";
 import { getColor } from "@/lib/balloonUtils";
 import { DisasterIcon, getDisasterTitle, getNearestBalloons } from "@/lib/disasterUtils";
 import {
     BarElement,
     CategoryScale,
     Chart as ChartJS,
-    ChartOptions,
     Filler,
     Legend,
     LinearScale,
     Title,
-    Tooltip,
+    Tooltip
 } from 'chart.js';
 import { Bar } from "react-chartjs-2";
 import { IoBalloon, IoWarning } from "react-icons/io5";
@@ -59,8 +59,10 @@ export default function DisasterInfo({ disaster, disasterLocationMap, setDisaste
         const fetchLocation = async () => {
             if (!disaster) return;
 
-            if (disasterLocationMap.has(JSON.stringify([disaster.geometry.y, disaster.geometry.x])) && disasterLocationMap.get(JSON.stringify([disaster.geometry.y, disaster.geometry.x]))) {
+            if (disasterLocationMap.has(JSON.stringify([disaster.geometry.y, disaster.geometry.x])) &&
+                disasterLocationMap.get(JSON.stringify([disaster.geometry.y, disaster.geometry.x]))) {
                 setLocationData(disasterLocationMap.get(JSON.stringify([disaster.geometry.y, disaster.geometry.x])));
+                return
             } else {
                 setLoading(true);
 
@@ -110,88 +112,12 @@ export default function DisasterInfo({ disaster, disasterLocationMap, setDisaste
     }, [disaster, disasterLocationMap, setDisasterLocationMap, disasterNewsMap, setDisasterNewsMap]);
 
     useEffect(() => {
-        setLocationData(undefined)
         setNewsData(undefined)
     }, [disaster]);
 
-    const newsChartData = useMemo(() => {
-        if (!newsData) return { labels: [], datasets: [] };
-
-        const dailyNews = newsData.stats.dailyNews.sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
-        const startDate = new Date(dailyNews[0].date);
-        const endDate = new Date(dailyNews[dailyNews.length - 1].date);
-        const totalMilliseconds = endDate.getTime() - startDate.getTime();
-        const numberOfIntervals = Math.min(8, dailyNews.length);
-        const interval = Math.ceil(totalMilliseconds / numberOfIntervals);
-
-        const labels = [];
-        const data = [];
-
-        for (let i = 0; i < numberOfIntervals; i++) {
-            const intervalStart = new Date(startDate.getTime() + i * interval);
-            const intervalEnd = new Date(intervalStart.getTime() + interval - 1);
-
-            let label;
-            if (totalMilliseconds < 8 * 24 * 60 * 60 * 1000) {
-                label = `${intervalStart.toLocaleString('default', { month: 'short' })} ${intervalStart.getDate()}, ${intervalStart.toLocaleTimeString('default', { hour: 'numeric', hour12: true })}`;
-            } else {
-                label = `${intervalStart.toLocaleString('default', { month: 'short' })} ${intervalStart.getDate()} ${intervalStart.getFullYear()}`;
-            }
-            labels.push(label);
-
-            const intervalData = dailyNews.filter(item => {
-                const itemDate = new Date(item.date);
-                return itemDate >= intervalStart && itemDate <= intervalEnd;
-            }).reduce((sum, item) => sum + item.total, 0);
-
-            data.push(intervalData);
-        }
-
-        return {
-            labels,
-            datasets: [
-                {
-                    label: 'Daily News Articles',
-                    data,
-                    backgroundColor: 'rgba(20, 10, 0, 0.2)',
-                    borderColor: 'rgba(20, 10, 0, 0.4)',
-                    borderWidth: 1,
-                },
-            ],
-        };
-    }, [newsData]);
+    const { newsChartData, chartOptions } = useDisasterNewsStats(newsData);
 
     const closestBalloons = useMemo(() => getNearestBalloons(disaster, balloons), [disaster, balloons]);
-
-    const chartOptions: ChartOptions<'bar'> = useMemo(() => {
-        return {
-            indexAxis: 'y',
-            aspectRatio: 1.5,
-            plugins: {
-                legend: {
-                    display: false,
-                },
-                title: {
-                    display: false,
-                },
-            },
-            scales: {
-                x: {
-                    beginAtZero: true,
-                    ticks: {
-                        display: true,
-                    },
-                },
-                y: {
-                    ticks: {
-                        display: true,
-                        autoSkip: false,
-                    },
-                    barThickness: 30,
-                },
-            },
-        };
-    }, []);
 
     return (
         <Card
@@ -212,7 +138,7 @@ export default function DisasterInfo({ disaster, disasterLocationMap, setDisaste
                                 setFocusBalloon(undefined);
                                 setFocusDisaster(undefined);
                             }}
-                            className="text-gray-500 hover:text-gray-700 text-lg"
+                            className="text-gray-500 hover:text-gray-700 text-lg self-start"
                         >
                             ✕
                         </button>
@@ -229,7 +155,7 @@ export default function DisasterInfo({ disaster, disasterLocationMap, setDisaste
                     </div>
                     <div>
                         {(!loading && locationData && locationData.data) && (
-                            <div className="flex flex-col mt-1">
+                            <div className="flex flex-col mb-1">
                                 <div className="flex items-center gap-2 max-w-[19.5rem]">
                                     <h2 className="text-sm text-primary whitespace-normal break-words leading-tight">
                                         {locationData.dataType === "geo" ? (
@@ -257,7 +183,7 @@ export default function DisasterInfo({ disaster, disasterLocationMap, setDisaste
                         <div className="max-w-[23rem]">
                             <label className="text-muted-foreground text-xs">Raw Summary</label>
                             <p className="text-sm text-foreground whitespace-normal break-words leading-tight">{disaster.attributes.name}</p>
-                            <p className="text-sm text-foreground whitespace-normal break-words leading-tight">{disaster.attributes.severity}</p>
+                            <p className="text-sm text-foreground whitespace-normal break-words leading-tight">{disaster.attributes.alertscore}</p>
                         </div>
                         <div className="grid grid-cols-2">
                             <div>
@@ -303,64 +229,70 @@ export default function DisasterInfo({ disaster, disasterLocationMap, setDisaste
                                 ))}
                             </div>
                         </div>
-                        {newsData ?
-                            newsData.stats.dailyNews.length > 4 && (
-                                <div className="flex flex-col">
-                                    <div>
-                                        <label className="text-muted-foreground text-xs">Relevant Articles</label>
-                                        <div className="flex flex-col gap-2 max-w-[23rem]">
-                                            {newsData.articles.sort((a, b) => new Date(b.pubdate).getTime() - new Date(a.pubdate).getTime()).slice(0, 3).map((article) => (
-                                                <Link
-                                                    href={article.link}
-                                                    target="_blank"
-                                                    key={article.link}
-                                                    className="p-2 rounded-md bg-zinc-300/50 hover:bg-zinc-300/90 transition-all duration-300 shadow-sm grid grid-cols-[auto_1fr] gap-3 items-center"
-                                                >
-                                                    <div className="w-12 h-12 bg-accent/75 rounded-md flex items-center justify-center">
-                                                        <Newspaper size={24} />
-                                                    </div>
-                                                    <div className="flex flex-col">
-                                                        <p className="text-[0.7rem] text-muted-foreground">
-                                                            {new Date(article.pubdate).toLocaleString('default', { month: 'short', day: 'numeric', year: 'numeric' })}
-                                                        </p>
-                                                        <h3 className="text-xs font-semibold leading-tight">{article.title}</h3>
-                                                        <p className="text-[0.6rem] font-light text-muted-foreground">{article.source}</p>
-                                                        <p className="text-[0.7rem] text-muted-foreground">
-                                                            {article.description.length > 200 ? `${article.description.substring(0, 200)}...` : article.description}
-                                                        </p>
-                                                    </div>
-                                                </Link>
-                                            ))}
-                                        </div>
-                                    </div>
-                                    <div className="mt-4">
-                                        <label className="text-muted-foreground text-xs">News Stats</label>
-                                        <div className={`max-w-[20rem]`}>
-                                            <Bar data={newsChartData} options={chartOptions} />
-                                        </div>
-                                        <p className="text-[0.7rem] text-muted-foreground">
-                                            Total Coverage: {newsData.stats.coverage.total}
-                                        </p>
-                                        <p className="text-[0.7rem] text-muted-foreground">
-                                            Last Hour: {newsData.stats.coverage.lastHour}
-                                        </p>
+                        {loading ? (
+                            <div className="flex items-center gap-2 pt-2">
+                                {loading && (
+                                    <MoonLoader className="text-primary" size={15} />
+                                )}
+                                <h2 className="text-muted-foreground text-sm">Loading news...</h2>
+                            </div>
+                        ) : newsData && newsData.stats.dailyNews.length > 4 ? (
+                            <div className="flex flex-col">
+                                <div>
+                                    <label className="text-muted-foreground text-xs">Relevant Articles</label>
+                                    <div className="flex flex-col gap-2 max-w-[23rem]">
+                                        {newsData.articles.sort((a, b) => new Date(b.pubdate).getTime() - new Date(a.pubdate).getTime()).slice(0, 3).map((article) => (
+                                            <Link
+                                                href={article.link}
+                                                target="_blank"
+                                                key={article.link}
+                                                className="p-2 rounded-md bg-zinc-300/50 hover:bg-zinc-300/90 transition-all duration-300 shadow-sm grid grid-cols-[auto_1fr] gap-3 items-center"
+                                            >
+                                                <div className="w-12 h-12 bg-accent/75 rounded-md flex items-center justify-center">
+                                                    <Newspaper size={24} />
+                                                </div>
+                                                <div className="flex flex-col">
+                                                    <p className="text-[0.7rem] text-muted-foreground">
+                                                        {new Date(article.pubdate).toLocaleString('default', { month: 'short', day: 'numeric', year: 'numeric' })}
+                                                    </p>
+                                                    <h3 className="text-xs font-semibold leading-tight">{article.title}</h3>
+                                                    <p className="text-[0.6rem] font-light text-muted-foreground">{article.source}</p>
+                                                    <p className="text-[0.7rem] text-muted-foreground">
+                                                        {article.description.length > 200 ? `${article.description.substring(0, 200)}...` : article.description}
+                                                    </p>
+                                                </div>
+                                            </Link>
+                                        ))}
                                     </div>
                                 </div>
-                            ) : loading ? (
-                                <div className="flex items-center gap-2 pt-2">
-                                    {loading && (
-                                        <MoonLoader className="text-primary" size={15} />
-                                    )}
-                                    <h2 className="text-muted-foreground text-sm">Loading news...</h2>
-                                </div>
-                            ) : (
-                                <div className="flex items-center gap-1.5">
-                                    <IoWarning className="text-muted-foreground" size={16} />
-                                    <p className="text-xs text-muted-foreground">
-                                        Insignificant news coverage
+                                <div className="mt-4">
+                                    <label className="text-muted-foreground text-xs">News Stats</label>
+                                    <div className={`max-w-[20rem]`}>
+                                        <Bar data={newsChartData} options={chartOptions} />
+                                    </div>
+                                    <p className="text-[0.7rem] text-muted-foreground">
+                                        Total Coverage: {newsData.stats.coverage.total}
+                                    </p>
+                                    <p className="text-[0.7rem] text-muted-foreground">
+                                        Last Hour: {newsData.stats.coverage.lastHour}
                                     </p>
                                 </div>
-                            )}
+                            </div>
+                        ) : newsData ? (
+                            <div className="flex items-center gap-1.5">
+                                <IoWarning className="text-muted-foreground" size={16} />
+                                <p className="text-xs text-muted-foreground">
+                                    Insignificant news coverage
+                                </p>
+                            </div>
+                        ) : (
+                            <div className="flex items-center gap-1.5">
+                                <IoWarning className="text-muted-foreground" size={16} />
+                                <p className="text-xs text-muted-foreground">
+                                    No news coverage found
+                                </p>
+                            </div>
+                        )}
                     </div>
                 </div>
             )}
