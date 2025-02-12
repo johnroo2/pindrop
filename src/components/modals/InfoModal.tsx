@@ -90,6 +90,9 @@ export default function InfoModal({ open, onClose }: InfoModalProps) {
                                         <li>
                                             <b>MarineRegions.org</b> - Ocean Geocoding
                                         </li>
+                                        <li>
+                                            <b>Corsproxy.io</b> - CORS proxy
+                                        </li>
                                     </ul>
                                 </AccordionContent>
                             </AccordionItem>

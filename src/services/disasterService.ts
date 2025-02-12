@@ -133,11 +133,17 @@ class DisasterService extends Service {
   }
 
   async getNewsArticles(disaster: DisasterFeature) {
+    const eventType = encodeURIComponent(disaster.attributes.eventtype);
+    const eventId = encodeURIComponent(disaster.attributes.eventid);
+
     const articlesRes = await this.safeAxiosApply<DisasterNewsArticle[]>(
       async () =>
-        await this.instance.get(
-          `https://www.gdacs.org/gdacsapi/api/emm/getemmnewsbykey?eventtype=${disaster.attributes.eventtype}&eventid=${disaster.attributes.eventid}`
-        )
+        await this.instance.get('/api/news/articles', {
+          params: {
+            eventType,
+            eventId,
+          },
+        })
     )();
 
     if (articlesRes instanceof AxiosError) {
@@ -149,9 +155,12 @@ class DisasterService extends Service {
 
     const statsRes = await this.safeAxiosApply<DisasterNewsStats>(
       async () =>
-        await this.instance.get(
-          `https://www.gdacs.org/gdacsapi/api/emm/getemmnewsstatisticbykey?eventtype=${disaster.attributes.eventtype}&eventid=${disaster.attributes.eventid}`
-        )
+        await this.instance.get('/api/news/stats', {
+          params: {
+            eventType,
+            eventId,
+          },
+        })
     )();
 
     if (statsRes instanceof AxiosError) {
