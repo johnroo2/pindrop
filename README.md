@@ -1,40 +1,62 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/pages/api-reference/create-next-app).
+## Pindrop
 
-## Getting Started
+Hi, and welcome to <b>Pindrop</b>, a data visualization tool for drawing connections between weather balloons and natural disasters.
 
-First, run the development server:
+#### Demo Video
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+<iframe src="https://drive.google.com/file/d/19nkIwe3NzUFPtcHaJiFnczXjy-Uer-nG/preview" width="640" height="480" allow="autoplay"></iframe>
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+If the embed isn't working, try this [link](https://drive.google.com/file/d/19nkIwe3NzUFPtcHaJiFnczXjy-Uer-nG/view?usp=sharing) instead.
 
-You can start editing the page by modifying `pages/index.tsx`. The page auto-updates as you edit the file.
 
-[API routes](https://nextjs.org/docs/pages/building-your-application/routing/api-routes) can be accessed on [http://localhost:3000/api/hello](http://localhost:3000/api/hello). This endpoint can be edited in `pages/api/hello.ts`.
+#### Features
 
-The `pages/api` directory is mapped to `/api/*`. Files in this directory are treated as [API routes](https://nextjs.org/docs/pages/building-your-application/routing/api-routes) instead of React pages.
+<ul>
+    <li>
+        <b>Balloons</b> - Live, robust updates from Windborne Systems&apos; dataset. Data points are included
+        from salvagable files with all 1,000 balloons intact &mdash; this is necessary to plot and extrapolate ballon paths.
+    </li>
+    <li>
+        <b>Disasters</b> - All significant natural disasters from the last 7 days, fetched from GDACS. Live data about relevant
+        news, statistics, and severity is included for each disaster.
+    </li>
+    <li>
+        <b>Weather</b> - Detailed weather data is included for each balloon, allowing for weather-related analysis regarding
+        nearby disasters. Related data is also provided, including history and forecasts.
+    </li>
+    <li>
+        <b>Visualization</b> - Balloons have their paths and velocities recorded and plotted on the map. Each balloon points to the
+        nearest disaster (obtained via Haversine distance) and vice versa, enabling quick traversal between elements.
+    </li>
+</ul>
 
-This project uses [`next/font`](https://nextjs.org/docs/pages/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+#### Sources
 
-## Learn More
+ <ul>
+    <li>
+        <b>Windborne Systems</b> - Balloon data
+    </li>
+    <li>
+        <b>GDACS, ARCGIS Online</b> - Disaster data
+    </li>
+    <li>
+        <b>WeatherAPI</b> - Weather data, including history and forecasts
+    </li>
+    <li>
+        <b>Nominatim</b> - Land Geocoding
+    </li>
+    <li>
+        <b>MarineRegions.org</b> - Ocean Geocoding
+    </li>
+    <li>
+        <b>Corsproxy.io</b> - CORS proxy
+    </li>
+</ul>
 
-To learn more about Next.js, take a look at the following resources:
+#### Tech Stack
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn-pages-router) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/pages/building-your-application/deploying) for more details.
+<ul>
+    <li>
+        React, Next.js, Tailwind CSS, TypeScript, Shadcn UI
+    </li>
+</ul>
