@@ -4,7 +4,7 @@ Hi, and welcome to <b>Pindrop</b>, a data visualization tool for drawing connect
 
 #### Demo Video
 
-<iframe src="https://drive.google.com/file/d/19nkIwe3NzUFPtcHaJiFnczXjy-Uer-nG/preview" width="640" height="480" allow="autoplay"></iframe>
+<iframe width="560" height="315" src="https://www.youtube.com/embed/TQ1BVvr-byA" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 
 If the embed isn't working, try this [link](https://drive.google.com/file/d/19nkIwe3NzUFPtcHaJiFnczXjy-Uer-nG/view?usp=sharing) instead.
 
