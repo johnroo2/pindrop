@@ -262,7 +262,7 @@ export default function BalloonWeather({ balloon, locationData, setViewState, we
                         {history && history.length > 0 &&
                             <div className="flex flex-col gap-4 bg-zinc-300/50 p-4 rounded-md items-center">
                                 <div className="flex flex-col w-full">
-                                    <p className="text-sm font-medium">Forecast</p>
+                                    <p className="text-sm font-medium">History</p>
                                     <p className="text-xs text-muted-foreground">Times are displayed in {new Date().toLocaleTimeString('en-us', { timeZoneName: 'short' }).split(' ')[2]}</p>
                                     <div className="grid grid-cols-3 gap-2 mt-2">
                                         {history.map((day) => (
