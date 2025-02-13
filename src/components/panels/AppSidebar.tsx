@@ -228,6 +228,7 @@ export default function AppSidebar({ refetch, activeBalloonEntry, balloonEntries
               size="icon"
               onClick={refetch}
               className="hover:bg-accent"
+              disabled={loading}
             >
               <RefreshCcw className="h-4 w-4" />
             </Button>
